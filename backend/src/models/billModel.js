@@ -11,20 +11,20 @@ const billSchema = new mongoose.Schema({
         ref: 'Order',
         required: true
     },
-    payerName: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Order',
+    customerName: {
+        type: String,
         required: true
     },
+    customerNumber: {
+        type: String,
+        required: true
+    },
+    
     totalAmount: {
         type: Number,
         required: true
-    },
-    paymentMethod: {
-        type: String,
-        enum: ["CASH", "CARD", "UPI"],
-        default: "CASH"
     }
+    
 }, { timestamps: true });
 
 module.exports = mongoose.model('Bill', billSchema);
