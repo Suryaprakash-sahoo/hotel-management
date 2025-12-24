@@ -23,6 +23,11 @@ const billSchema = new mongoose.Schema({
     totalAmount: {
         type: Number,
         required: true
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['Pending', 'Paid'],
+        default: 'Pending'
     }
     
 }, { timestamps: true });

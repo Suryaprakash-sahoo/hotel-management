@@ -3,6 +3,7 @@ const AuthMiddleware = require('../middlewares/userMiddleware.js');
 const order = require('../models/orderModel.js');
 const food = require('../models/FoodModel.js');
 const Bill = require('../models/billModel.js')
+const Table = require('../models/tableModel.js')
 
 
 
@@ -102,6 +103,70 @@ router.get('/createBill/:orderId', AuthMiddleware, async (req, res) => {
     });
   }
 });
+
+//get All bills
+router.get('/bills', AuthMiddleware, async (req, res) => {
+  try {
+    const bills = await Bill.find({"paymentStatus": 'Pending'})
+    res.status(200).json({
+      success: true,
+      bills,
+    });
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error getting bills',
+      error,
+    });
+  }
+});
+
+//get the bills by id and update the payment status
+router.post('/getBill/:BillId', AuthMiddleware, async (req, res) => {
+  try {
+    const {BillId} = req.params;
+     const bill = await Bill.findById(BillId);
+
+     if(!bill){
+        return res.status(404).json({
+            success: false,
+            message: 'Bill not found',
+        });
+     }
+      res.status(200).json({
+        success: true,
+        bill,
+      });
+
+        bill.paymentStatus = 'Paid';
+        await bill.save();
+         const table = bill.tableId;
+        const existingTable = await Table.findById(table);
+        existingTable.occupied = 'false';
+        existingTable.occupiedByName = null;
+        existingTable.occupiedByNumber = null;
+        existingTable.totalOrders = 0;
+        existingTable.totalAmount = 0;
+        existingTable.paymentStatus = null;
+        await existingTable.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Payment successful and table updated',
+        });
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error getting bill',
+      error,
+    });
+  }
+
+})
 
 
 
