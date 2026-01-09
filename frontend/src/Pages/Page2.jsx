@@ -3,6 +3,7 @@ import React from 'react'
  import Serve from '../assets/Waiter.jpg'
  import Food from '../assets/Food.jpg'
  import Happy from '../assets/Happy.jpg'
+ import Footer from '../Components/Footer'
 
  
 const data = [
@@ -47,6 +48,7 @@ function Page2() {
             </div>
         ))}
       </div>
+      <Footer/>
     </>
   )
 }

@@ -5,6 +5,7 @@ import Page3 from '../Pages/Page3.jsx'
 import Page2 from '../Pages/Page2.jsx'
 
 
+
 function Home() {
   return (
     <div>
@@ -12,6 +13,7 @@ function Home() {
       <Page1 />
       <Page3 />
       <Page2 />
+      
 
      
       

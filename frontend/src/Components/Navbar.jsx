@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import Res from "../assets/Res.png"
+import { useNavigate } from 'react-router-dom'
 
 function Navbar() {
   const [show, setShow] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,7 +38,7 @@ function Navbar() {
         <button className='text-white font-bold hover:text-gray-300'>About</button>
         <button className='text-white font-bold hover:text-gray-300'>Contact</button>
         <button className='text-white font-bold hover:text-gray-300'>Book Now</button>
-        <button className='text-white font-bold hover:text-gray-300'>Login</button>
+        <button className='text-white font-bold hover:text-gray-300' onClick={() => navigate('/auth')}>Login</button>
         <button className='text-white text-xl'>
           <i className="fa-solid fa-circle-user"></i>
         </button>

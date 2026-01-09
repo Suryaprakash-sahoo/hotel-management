@@ -1,6 +1,7 @@
 import React from 'react'
 import '../App.css'
 
+
 function Page3() {
   return (
     <>
@@ -14,6 +15,7 @@ function Page3() {
          and an experience that feels just right. Good food, great service, and a vibe you’ll want to come back for.
       </p>
     </div>
+    
 
     </>
   )
