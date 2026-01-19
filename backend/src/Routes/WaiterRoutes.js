@@ -29,6 +29,7 @@ router.get('/dashboard', AuthMiddleware, async (req, res) => {
 // GET all tables 
 router.get('/AllTables',AuthMiddleware, async (req, res) => {
   try {
+     console.log("Endpiont hit")
     const tables = await Table.find().sort({ tableNumber: 1 });
 
     res.status(200).json({
@@ -103,6 +104,64 @@ router.get('/switchBooking', AuthMiddleware, async (req, res) => {
         });
     }
 })
+
+router.post('/bookTable', AuthMiddleware, async (req, res) => {
+    try {
+       
+        const { occupiedByName, occupiedByNumber , tableNumber} = req.body;
+        
+        // Find the table by the table number
+        const tableToBook = await Table.findOne({ tableNumber });
+
+        // Check if table exists
+        if (!tableToBook) {
+            return res.status(404).json({
+                success: false,
+                message: "Table not found"
+            });
+        }
+
+        // Check if table is already occupied
+        if (tableToBook.occupied) {
+            return res.status(400).json({
+                success: false,
+                message: `Table ${tableNumber} is already occupied`
+            });
+        } 
+
+        
+
+        // Update the table with booking details and paymentStatus
+        const updatedTable = await Table.findOneAndUpdate(
+            { tableNumber },
+            {
+                $set: {
+                    occupied: true,
+                    occupiedByName,
+                    occupiedByNumber,
+                    paymentStatus: 'pending'
+                }
+            },
+            { new: true } // Returns the updated document
+        );
+
+        // Log for debugging
+        console.log("Table booked successfully:", updatedTable);
+
+        res.status(200).json({
+            success: true,
+            table: updatedTable,
+            message: `Table ${tableNumber} booked successfully`
+        });
+
+    } catch (error) {
+        console.error("Error booking table:", error);
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong while booking the table"
+        });
+    }
+});
 
 //book a proper Table
 router.post('/bookTable/:tableNumber', AuthMiddleware, async (req, res) => {
@@ -325,15 +384,6 @@ router.put('/addItems/:orderId', AuthMiddleware, async (req, res) => {
     });
   }
 });
-
-
-
-
-
-
-
-
-
 
 
 
