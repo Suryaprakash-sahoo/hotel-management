@@ -7,6 +7,7 @@ const Order = require('../models/orderModel.js');
 const router = express.Router();
 
 // Get Lioggedin User Dashboard
+//done
 router.get('/dashboard', AuthMiddleware, async (req, res) => {
     try {
           const user = await User.findById(req.user.id)
@@ -27,6 +28,7 @@ router.get('/dashboard', AuthMiddleware, async (req, res) => {
 
 
 // GET all tables 
+//done
 router.get('/AllTables',AuthMiddleware, async (req, res) => {
   try {
      console.log("Endpiont hit")
@@ -44,6 +46,7 @@ router.get('/AllTables',AuthMiddleware, async (req, res) => {
 
 
 //check table status
+//done
 router.get('/tableStatus/:tablenumber', AuthMiddleware, async (req, res) => {
     try {
 
@@ -78,6 +81,7 @@ router.get('/tableStatus/:tablenumber', AuthMiddleware, async (req, res) => {
 
 
 // Switch booking
+//still not required
 router.get('/switchBooking', AuthMiddleware, async (req, res) => {
     try {
       const tableData =  await Table.find({});
@@ -104,7 +108,8 @@ router.get('/switchBooking', AuthMiddleware, async (req, res) => {
         });
     }
 })
-
+//book a table by entering a table number
+//done
 router.post('/bookTable', AuthMiddleware, async (req, res) => {
     try {
        
@@ -163,7 +168,8 @@ router.post('/bookTable', AuthMiddleware, async (req, res) => {
     }
 });
 
-//book a proper Table
+//book a proper Table by getting the table number from the link
+//done
 router.post('/bookTable/:tableNumber', AuthMiddleware, async (req, res) => {
     try {
         const tableNumber = Number(req.params.tableNumber);
@@ -225,6 +231,7 @@ router.post('/bookTable/:tableNumber', AuthMiddleware, async (req, res) => {
 
 
 //Swiitch cancel booking
+//still not required
 router.get('/switchCancel', AuthMiddleware, async (req, res) => {
     try {
          const AllBookedTables = await Table.find({ occupied: true });
@@ -245,8 +252,10 @@ router.get('/switchCancel', AuthMiddleware, async (req, res) => {
 
 
 //cancel booking by the table number
+//done
 router.post('/cancelBooking/:tableNumber', AuthMiddleware , async(req , res)=> {
     try{
+        console.log("Cancel booking request received");
           const tableNumber = Number(req.params.tableNumber);
           if(!tableNumber){
             return res.status(400).json({
@@ -317,7 +326,7 @@ router.post('/createOrder/:tableId', AuthMiddleware, async (req, res) => {
         console.log("Table found:", table);
         const customerName = table.occupiedByName;
         const customerNumber = table.occupiedByNumber;
-        const { items, customerNotes } = req.body;
+        const { items , customerNotes } = req.body;
          
          const newOrder = new Order({
             tableId,
