@@ -184,7 +184,7 @@ function Auth() {
 
   return (
     <div
-      className="h-screen w-full flex items-center justify-center"
+      className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6"
       style={{
         backgroundImage: `url(${Bg})`,
         backgroundSize: "cover",
@@ -192,12 +192,12 @@ function Auth() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="h-[520px] w-[380px] bg-black/10 backdrop-blur-md rounded-lg shadow-lg flex flex-col p-4">
+      <div className="w-full max-w-sm sm:max-w-md min-h-[520px] bg-black/10 backdrop-blur-md rounded-lg shadow-lg flex flex-col p-4 sm:p-6">
         {/* Tabs */}
-        <div className="flex justify-between mt-3">
+        <div className="flex justify-between gap-2 mt-2 sm:mt-3">
           <h6
             onClick={() => setIsLogin(true)}
-            className={`text-xl font-bold p-2 rounded-xl ml-7 cursor-pointer transition
+            className={`flex-1 text-lg sm:text-xl font-bold p-2 rounded-xl cursor-pointer transition text-center
               ${isLogin ? "bg-blue-500 text-white" : "text-gray-200 hover:bg-blue-300"}`}
           >
             Login
@@ -205,7 +205,7 @@ function Auth() {
 
           <h6
             onClick={() => setIsLogin(false)}
-            className={`text-xl font-bold p-2 rounded-xl mr-7 cursor-pointer transition
+            className={`flex-1 text-lg sm:text-xl font-bold p-2 rounded-xl cursor-pointer transition text-center
               ${!isLogin ? "bg-blue-500 text-white" : "text-gray-200 hover:bg-blue-300"}`}
           >
             Register

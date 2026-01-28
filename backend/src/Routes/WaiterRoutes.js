@@ -3,6 +3,7 @@ const AuthMiddleware = require('../middlewares/userMiddleware.js');
 const User = require('../models/UserModel.js');
 const Table = require('../models/tableModel.js');
 const Order = require('../models/orderModel.js');
+const Food =  require('../models/FoodModel.js')
 
 const router = express.Router();
 
@@ -31,7 +32,6 @@ router.get('/dashboard', AuthMiddleware, async (req, res) => {
 //done
 router.get('/AllTables',AuthMiddleware, async (req, res) => {
   try {
-     console.log("Endpiont hit")
     const tables = await Table.find().sort({ tableNumber: 1 });
 
     res.status(200).json({
@@ -297,6 +297,24 @@ router.post('/cancelBooking/:tableNumber', AuthMiddleware , async(req , res)=> {
         res.status(500).json({
             success: false,
             message: "Cancellation of booking table failed"
+        });
+    }
+})
+
+
+router.get("/AllFood" , AuthMiddleware, async (req, res) => {
+    try {
+        const allFood = await Food.find({})
+        console.log("All food found successfully")
+        res.status(200).json({
+            success: true,
+            allFood
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error"
         });
     }
 })

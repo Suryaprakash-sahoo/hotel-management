@@ -36,14 +36,14 @@ const data = [
 function Page2() {
   return (
     <>
-      <div className='w-full bg-gradient-to-br from-gray-600 to-gray-800  flex flex-col items-center py-20'>
+      <div className='w-full bg-gradient-to-br from-gray-600 to-gray-800 flex flex-col items-center py-12 sm:py-16 md:py-20 px-4 sm:px-6'>
 
         {data.map(({id, image, title, description}) => (
-            <div className={`content flex flex-row items-center my-10 w-3/4 ${id % 2 == 1 ? 'flex-row-reverse' : ''}`} key={id}>
-                <img src={image} alt={title} className='w-1/3 h-64 object-cover rounded-lg shadow-lg'/>
-                <div className='ml-6'>
-                    <h2 className=' text-white text-xl font-bold mb-2'>{title}</h2>
-                    <p className='text-white'>{description}</p>
+            <div className={`content flex flex-col md:flex-row items-center justify-center my-8 sm:my-10 w-full max-w-5xl gap-6 sm:gap-8 ${id % 2 == 1 ? 'md:flex-row-reverse' : ''}`} key={id}>
+                <img src={image} alt={title} className='w-full md:w-1/3 h-48 sm:h-56 md:h-64 object-cover rounded-lg shadow-lg'/>
+                <div className='md:ml-6'>
+                    <h2 className='text-white text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4'>{title}</h2>
+                    <p className='text-white text-sm sm:text-base leading-relaxed'>{description}</p>
                 </div>
             </div>
         ))}

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import Res from '../assets/Res.png'
 import Emoji from '../assets/emoji.png'
@@ -17,6 +18,9 @@ import { Input } from "../Components/ui/input"
 import { Label } from "../Components/ui/label"
 
 function Main() {
+   const navigate = useNavigate();
+  const [items, setItems] = useState([]);
+  const [food, setFood] = useState([]);
   const [tables, setTables] = useState([]);
   const [user, setUser] = useState(null);
   const [clickTable, setClickTable] = useState(null);
@@ -26,20 +30,34 @@ function Main() {
     occupiedByNumber: "",
   })
 
+
+  const [costumerNotes, setCostumerNotes] = useState("");
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-   const HandleCancel =async () => {
-   try {
-     const response = await axios.post(`http://localhost:9000/api/waiter/cancelBooking/${clickTable.tableNumber}`, {},
-      { withCredentials: true });
+  const HandleCancel = async () => {
+    try {
+      const response = await axios.post(`http://localhost:9000/api/waiter/cancelBooking/${clickTable.tableNumber}`, {},
+        { withCredentials: true });
       console.log(`Cancel booking request received for table ${clickTable.tableNumber}`);
       toast.success("Booking cancelled successfully!")
-   } catch (error) {
-     toast.error("Failed to cancel booking.")
-   }
-   }
+    } catch (error) {
+      toast.error("Failed to cancel booking.")
+    }
+  }
+
+  const HandleCreate = async(e) => {
+    e.preventDefault();
+    try{
+
+       const response = await axios.post(`http://localhost:9000/api/waiter/createOrder/${clickTable._id}`, formData, { withCredentials: true });
+
+    } catch (error) {
+      toast.error(`${error.message}`)
+    }
+  }
 
 
   const handleSubmit = async (e) => {
@@ -96,6 +114,22 @@ function Main() {
       }
     };
     fetchTables();
+  }, []);    
+
+
+   useEffect(() => {
+    const fetchFood = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:9000/api/waiter/AllFood",
+          { withCredentials: true }
+        );
+        setFood(response.data.foods); 
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchFood();
   }, []);
 
   return (
@@ -105,30 +139,30 @@ function Main() {
         autoClose={3000}
         theme="dark"
       />
-      <div className="container h-screen w-full bg-gradient-to-b from-black to-gray-600">
-        <div className='w-full flex justify-center p-5 '>
+      <div className="container min-h-screen w-full bg-gradient-to-b from-black to-gray-600 flex flex-col">
+        <div className='w-full flex justify-center p-3 sm:p-5 '>
           <div
             className={`
-              h-15 w-[75%] rounded-full
+              h-12 sm:h-15 w-[90%] sm:w-[75%] rounded-full
               bg-black/10 backdrop-blur-md
               shadow-[8px_10px_20px_-8px_rgba(255,255,255,0.7)]
-              flex items-center justify-between
+              flex items-center justify-between px-3 sm:px-0
             `}
           >
-            <img src={Res} alt="Logo" className='ml-4 h-10 w-10' />
+            <img src={Res} alt="Logo" className='h-8 sm:h-10 w-8 sm:w-10 ml-2 sm:ml-4' />
 
-            <div className='flex space-x-4 mr-4'>
-              <button className='text-white font-bold hover:text-gray-300'>Home</button>
-              <button className='text-white font-bold hover:text-gray-300'>About</button>
-              <button className='text-white font-bold hover:text-gray-300'>Contact</button>
+            <div className='flex gap-2 sm:space-x-4 mr-2 sm:mr-4'>
+              <button className='text-white font-bold text-xs sm:text-base hover:text-gray-300 hidden sm:block'>Home</button>
+              <button className='text-white font-bold text-xs sm:text-base hover:text-gray-300 hidden sm:block'>About</button>
+              <button className='text-white font-bold text-xs sm:text-base hover:text-gray-300 hidden md:block'>Contact</button>
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className='text-white font-bold hover:text-gray-300'>
-                    Book Now
+                  <button className='text-white font-bold text-xs sm:text-base hover:text-gray-300'>
+                    Book
                   </button>
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[425px] w-[95%]">
                   <DialogHeader>
                     <DialogTitle>Book a Table</DialogTitle>
                     <DialogDescription>
@@ -178,33 +212,33 @@ function Main() {
                   </form>
                 </DialogContent>
               </Dialog>
-              <button className='text-white text-xl' onClick={ClickDashboard}>
+              <button className='text-white text-lg sm:text-xl' onClick={ClickDashboard}>
                 <i className="fa-solid fa-circle-user"></i>
               </button>
             </div>
           </div>
         </div>
 
-       
-        <div className="w-full p-4 flex flex-row gap-4 h-[calc(100vh-180px)]">
+
+        <div className="w-full px-2 sm:p-4 flex flex-col lg:flex-row gap-2 sm:gap-4 flex-1 min-h-0" style={{height: 'calc(100vh - 100px)'}}>
           {/* Left section - Takes full available height */}
-          <div className="flex flex-col gap-4 flex-1 h-full">
+          <div className="flex flex-col gap-2 sm:gap-4 flex-1 lg:flex-[2] h-full min-h-0">
             {/* Icons Section - Takes only the space it needs */}
-            <div className="icons-section bg-white/5 backdrop-blur-sm rounded-lg p-4">
-              <h3 className="text-white text-lg font-bold mb-3">Tables Layout</h3>
-              <div className="flex flex-wrap gap-3">
+            <div className="icons-section bg-white/5 backdrop-blur-sm rounded-lg p-2 sm:p-4">
+              <h3 className="text-white text-sm sm:text-lg font-bold mb-2 sm:mb-3">Tables Layout</h3>
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 {tables.map((table, index) => (
                   <div
                     onClick={() => HandleClick(table)}
                     key={table._id}
                     className={`
-                      w-12 h-12 rounded-full cursor-pointer
+                      w-10 h-10 sm:w-12 sm:h-12 rounded-full cursor-pointer
                       flex items-center justify-center
                       transition-transform hover:scale-110
                       ${table.occupied ? 'bg-red-500' : 'bg-green-500'}
                     `}
                   >
-                    <span className="text-white font-semibold text-sm">
+                    <span className="text-white font-semibold text-xs sm:text-sm">
                       {table.tableNumber}
                     </span>
                   </div>
@@ -215,63 +249,63 @@ function Main() {
             {/* Table Section Below Icons - Takes remaining height */}
             <div className="orders-section flex-1 min-h-0 bg-white/10 backdrop-blur-md rounded-lg shadow-lg overflow-auto">
               {clickTable ? (
-                <div className="p-4 h-full">
-                  <h3 className="text-white text-lg font-bold mb-3">Orders for Table {clickTable.tableNumber}</h3>
+                <div className="p-2 sm:p-4 h-full">
+                  <h3 className="text-white text-sm sm:text-lg font-bold mb-2 sm:mb-3">Orders for Table {clickTable.tableNumber}</h3>
                   <div className="space-y-2">
                     {/* Add your orders table/list here */}
-                    <p className="text-gray-300">No orders yet</p>
+                    <p className="text-gray-300 text-xs sm:text-sm">No orders yet</p>
                   </div>
                 </div>
               ) : (
-                <div className="h-full flex justify-center items-center">
-                  <p className="text-gray-400">Select a table to view orders</p>
+                <div className="h-full flex justify-center items-center p-2 sm:p-4">
+                  <p className="text-gray-400 text-center text-xs sm:text-sm">Select a table to view orders</p>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Right section - Fixed height to match left section */}
-          <div className="table-details w-110 bg-white/10 backdrop-blur-md rounded-lg shadow-lg overflow-auto">
+          {/* Right section - Fixed width on desktop, full on mobile */}
+          <div className="table-details w-full sm:w-110 bg-white/10 backdrop-blur-md rounded-lg shadow-lg overflow-auto lg:flex-shrink-0">
             {clickTable ? (
-              <div className="p-4 flex flex-col">
-                <h2 className="text-white flex text-3xl mt-2 justify-center font-extrabold">Table Details</h2>
-                <div className="box h-20 w-full bg-white/20 rounded-lg mt-4 flex flex-col">
-                  <div className="table p-3">
-                    <p className="text-white">Table Number: {clickTable.tableNumber}</p>
-                    <p className="text-white">TableId: {clickTable._id}</p>
+              <div className="p-2 sm:p-4 flex flex-col">
+                <h2 className="text-white flex text-xl sm:text-3xl mt-1 sm:mt-2 justify-center font-extrabold">Table Details</h2>
+                <div className="box min-h-16 sm:h-20 w-full bg-white/20 rounded-lg mt-3 sm:mt-4 flex flex-col">
+                  <div className="table p-2 sm:p-3">
+                    <p className="text-white text-xs sm:text-sm">Table Number: {clickTable.tableNumber}</p>
+                    <p className="text-white text-xs sm:text-sm">TableId: {clickTable._id}</p>
                   </div>
                 </div>
-                <div className="available h-10 w-full bg-black/10 flex flex-row items-center justify-between p-4 mt-4 rounded">
-                  <p className="text-white">Available:</p>
+                <div className="available min-h-10 w-full bg-black/10 flex flex-col sm:flex-row items-start sm:items-center justify-between p-2 sm:p-4 mt-3 sm:mt-4 rounded gap-1 sm:gap-0">
+                  <p className="text-white text-xs sm:text-base">Available:</p>
                   <p className='text-white'>
                     {clickTable.occupied ? (
-                      <button className="bg-red-500 text-white px-4 py-2 rounded-full">Occupied</button>
+                      <button className="bg-red-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm">Occupied</button>
                     ) : (
-                      <button className="bg-green-500 text-white px-4 py-2 rounded-full">Available</button>
+                      <button className="bg-green-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm">Available</button>
                     )}
                   </p>
                 </div>
-                <div className="content flex flex-row items-center justify-between mt-4">
-                  <p className='mx-auto text-white'>Type: {clickTable.type}</p>
-                  <p className='mx-auto text-white'>Capacity: {clickTable.capacity}</p>
+                <div className="content flex flex-col sm:flex-row items-start sm:items-center justify-between mt-3 sm:mt-4 gap-1 sm:gap-0">
+                  <p className='text-white text-xs sm:text-sm'>Type: {clickTable.type}</p>
+                  <p className='text-white text-xs sm:text-sm'>Capacity: {clickTable.capacity}</p>
                 </div>
-                <div className="content flex flex-row items-center justify-between mt-4">
-                  <p className='mx-auto text-white'>Customer Name: {clickTable.occupiedByName ? clickTable.occupiedByName : "--"}</p>
-                  <p className='mx-auto text-white'>Payment Status: {clickTable.paymentStatus ? "Not paid" : "--"}</p>
+                <div className="content flex flex-col sm:flex-row items-start sm:items-center justify-between mt-3 sm:mt-4 gap-1 sm:gap-0">
+                  <p className='text-white text-xs sm:text-sm'>Customer Name: {clickTable.occupiedByName ? clickTable.occupiedByName : "--"}</p>
+                  <p className='text-white text-xs sm:text-sm'>Payment Status: {clickTable.paymentStatus ? "Not paid" : "--"}</p>
                 </div>
 
-                <div className="book mt-6">
+                <div className="book mt-4 sm:mt-6">
                   {clickTable.occupied ? (
-                    <div className='flex flex-row gap-2'>
-                      <button className="bg-red-500 text-white px-4 py-2 rounded-full flex-1" onClick={HandleCancel}>Cancel Booking</button>
-                      <button className="bg-green-500 text-white px-4 py-2 rounded-full flex-1">Create Order</button>
+                    <div className='flex flex-col sm:flex-row gap-1 sm:gap-2'>
+                      <button className="bg-red-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={HandleCancel}>Cancel Booking</button>
+                      <button className="bg-green-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={() => {navigate('/order')}}>Order Food !!</button>
                     </div>
                   ) : (
                     <Dialog>
                       <DialogTrigger asChild>
-                        <button className="bg-blue-800 w-full text-white px-4 py-2 rounded-full">Book Now</button>
+                        <button className="bg-blue-800 w-full text-white px-4 py-2 rounded-full text-xs sm:text-sm">Book Now</button>
                       </DialogTrigger>
-                      <DialogContent className="sm:max-w-[425px]">
+                      <DialogContent className="sm:max-w-[425px] w-[95%]">
                         <DialogHeader>
                           <DialogTitle>Book a Table</DialogTitle>
                           <DialogDescription>
@@ -279,7 +313,7 @@ function Main() {
                           </DialogDescription>
                         </DialogHeader>
                         <form onSubmit={handleBy} className="space-y-4 mt-4">
-                          <div className='flex flex-col text-black text-lg mb-4'>
+                          <div className='flex flex-col text-black text-base sm:text-lg mb-4'>
                             <p>Table Number: {clickTable.tableNumber}</p>
                           </div>
                           <div>
@@ -313,9 +347,9 @@ function Main() {
                 </div>
               </div>
             ) : (
-              <div className="h-full w-full flex justify-center items-center flex-col p-4">
-                <p className="text-white font-extrabold text-2xl mb-2">No table selected</p>
-                <p className="text-white text-center">Please select a table from the layout to view details</p>
+              <div className="h-full w-full flex justify-center items-center flex-col p-3 sm:p-4">
+                <p className="text-white font-extrabold text-lg sm:text-2xl mb-2">No table selected</p>
+                <p className="text-white text-center text-xs sm:text-sm">Please select a table from the layout to view details</p>
               </div>
             )}
           </div>
