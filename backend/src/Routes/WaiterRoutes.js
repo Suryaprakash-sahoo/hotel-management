@@ -45,7 +45,7 @@ router.get('/AllTables',AuthMiddleware, async (req, res) => {
 });
 
 
-//check table status
+//check table status by table number
 //done
 router.get('/tableStatus/:tablenumber', AuthMiddleware, async (req, res) => {
     try {
@@ -79,6 +79,31 @@ router.get('/tableStatus/:tablenumber', AuthMiddleware, async (req, res) => {
     }
 });
 
+//check the table by the table id
+router.get("/tableStatus/:tableId", AuthMiddleware, async (req, res) => {
+    try {
+        const tableId = req.params.tableId;
+        const table = await Table.findById(tableId);
+        if (!table) {
+            return res.status(404).json({
+                success: false,
+                message: "Table not found"
+            });
+        }
+        console.log("Table:", table);
+        res.status(200).json({
+            success: true,
+            table: table,
+            message: `Table ${tableId} status retrieved successfully`
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+});
 
 // Switch booking
 //still not required

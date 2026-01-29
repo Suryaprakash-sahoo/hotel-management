@@ -13,7 +13,7 @@ function App() {
           <Route path="/" element={<Home/>} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/home" element={<Main />} />
-          <Route path="/order" element={<Order />} />
+          <Route path="/order/:tableId" element={<Order />} />
           
         </Routes>
 

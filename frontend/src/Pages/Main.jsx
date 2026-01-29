@@ -298,7 +298,7 @@ function Main() {
                   {clickTable.occupied ? (
                     <div className='flex flex-col sm:flex-row gap-1 sm:gap-2'>
                       <button className="bg-red-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={HandleCancel}>Cancel Booking</button>
-                      <button className="bg-green-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={() => {navigate('/order')}}>Order Food !!</button>
+                      <button className="bg-green-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={() => {navigate(`/order/${clickTable._id}`)}}>Order Food !!</button>
                     </div>
                   ) : (
                     <Dialog>
