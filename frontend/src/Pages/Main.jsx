@@ -117,20 +117,7 @@ function Main() {
   }, []);    
 
 
-   useEffect(() => {
-    const fetchFood = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:9000/api/waiter/AllFood",
-          { withCredentials: true }
-        );
-        setFood(response.data.foods); 
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchFood();
-  }, []);
+  
 
   return (
     <>
@@ -353,6 +340,11 @@ function Main() {
               </div>
             )}
           </div>
+          
+
+           
+
+           
         </div>
       </div>
     </>

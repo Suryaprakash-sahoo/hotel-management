@@ -80,7 +80,7 @@ router.get('/tableStatus/:tablenumber', AuthMiddleware, async (req, res) => {
 });
 
 //check the table by the table id
-router.get("/tableStatus/:tableId", AuthMiddleware, async (req, res) => {
+router.get("/tableId/:tableId", AuthMiddleware, async (req, res) => {
     try {
         const tableId = req.params.tableId;
         const table = await Table.findById(tableId);
