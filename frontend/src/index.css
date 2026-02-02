@@ -127,3 +127,19 @@
     @apply bg-background text-foreground;
     }
 }
+.box::-webkit-scrollbar {
+  width: 3px;              /* scrollbar width */
+}
+
+.box::-webkit-scrollbar-track {
+  background: transparent;      /* track color */
+}
+
+.box::-webkit-scrollbar-thumb {
+  background: #888;         /* thumb color */
+  border-radius: 4px;       /* rounded corners */
+}
+
+.box::-webkit-scrollbar-thumb:hover {
+  background: #555;         /* hover effect */
+}
