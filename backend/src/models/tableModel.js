@@ -34,6 +34,11 @@ const tableSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    orderId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Order",
+  default: null
+},
     paymentStatus: { type: String,
          enum: ['pending', 'paid', 'partial'],
          default: null }

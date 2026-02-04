@@ -6,7 +6,9 @@ import { Input } from "../Components/ui/input";
 import { Textarea } from "../Components/ui/textarea";
 import { Label } from "../Components/ui/label";
 import { Plus, Minus } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
 import '../index.css'
+import 'react-toastify/dist/ReactToastify.css'
 
 function Order() {
   const { tableId } = useParams();
@@ -73,11 +75,39 @@ function Order() {
   };
 
   /* ---------------- SUBMIT ---------------- */
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitting order:", formData);
-    // axios.post("/api/order", formData)
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const payload = {
+    customerNotes: formData.customerNotes,
+    items: formData.items.map((item) => ({
+      dish: item._id,
+      qty: String(item.quantity), // backend expects string
+    })),
   };
+
+  console.log("Submitting order payload:", payload);
+
+  try {
+    const response = await axios.post(
+      `http://localhost:9000/api/waiter/createOrder/${tableId}`,
+      payload,
+      { withCredentials: true }
+      
+    );
+
+    toast.success("Order submitted successfully!");
+    console.log("Order submitted:", response.data);
+
+    setFormData({ customerNotes: "", items: [] });
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+    toast.error(
+      error.response?.data?.message || "Failed to submit order"
+    );
+  }
+};
+
 
   /* ---------------- FETCH TABLE ---------------- */
   useEffect(() => {
@@ -116,6 +146,7 @@ function Order() {
   }, []);
 
   return (
+   <>
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="container mx-auto p-4 lg:p-6">
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 h-[calc(100vh-2rem)]">
@@ -300,6 +331,9 @@ function Order() {
         </div>
       </div>
     </div>
+    <ToastContainer position="top-right" autoClose={3000} />
+    </>
+    
   );
 }
 

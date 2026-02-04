@@ -229,7 +229,9 @@ router.post('/bookTable/:tableNumber', AuthMiddleware, async (req, res) => {
                     occupied: true,
                     occupiedByName,
                     occupiedByNumber,
-                    paymentStatus: 'pending'
+                    paymentStatus: 'pending',
+                    orderId: null
+                    
                 }
             },
             { new: true } // Returns the updated document
@@ -380,6 +382,8 @@ router.post('/createOrder/:tableId', AuthMiddleware, async (req, res) => {
          });
             await newOrder.save();
             console.log("Order created successfully:", newOrder);
+             table.orderId = newOrder._id;
+             await table.save(); 
           res.status(201).json({
             success: true,
             order: newOrder,
@@ -436,6 +440,35 @@ router.put('/addItems/:orderId', AuthMiddleware, async (req, res) => {
     });
   }
 });
+
+// show the order details 
+ router.get('/orderDetails/:orderId', AuthMiddleware, async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const order = await Order.findById(orderId).populate('items.dish');
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found"
+      });
+    }
+    res.status(200).json({
+      success: true,
+      order
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+});
+
+
+
+
+
 
 
 

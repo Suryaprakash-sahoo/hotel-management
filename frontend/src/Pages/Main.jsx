@@ -92,6 +92,16 @@ function Main() {
     }
   }
 
+  const HandleOrder = async () => {
+    try {
+      const response = await axios.get(`http://localhost:9000/api/waiter/orderDetails/${clickTable._id}`, { withCredentials: true });
+      console.log(response.data);
+    } catch (error) {
+      console.log(error)
+      toast.error("Failed to get orders.")
+    }
+  }
+
   const ClickDashboard = async () => {
     try {
       const response = await axios.get("http://localhost:9000/api/waiter/dashboard", { withCredentials: true });
@@ -280,13 +290,23 @@ function Main() {
                   <p className='text-white text-xs sm:text-sm'>Customer Name: {clickTable.occupiedByName ? clickTable.occupiedByName : "--"}</p>
                   <p className='text-white text-xs sm:text-sm'>Payment Status: {clickTable.paymentStatus ? "Not paid" : "--"}</p>
                 </div>
+                <div className="content flex flex-col sm:flex-row items-start sm:items-center justify-between mt-3 sm:mt-4 gap-1 sm:gap-0">
+                  <p className='text-white text-xs sm:text-sm'>Amount to Pay: {clickTable.totalAmount ? clickTable.totalAmount : "--"}</p>
+                  <p className='text-white text-xs sm:text-sm'>Order Id: {clickTable.orderId ? clickTable.orderId : "--"}</p>
+                </div>
 
                 <div className="book mt-4 sm:mt-6">
                   {clickTable.occupied ? (
-                    <div className='flex flex-col sm:flex-row gap-1 sm:gap-2'>
+                 <div className="flex flex-col ">
+                     <div className='flex flex-col sm:flex-row gap-1 sm:gap-2'>
                       <button className="bg-red-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={HandleCancel}>Cancel Booking</button>
-                      <button className="bg-green-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={() => {navigate(`/order/${clickTable._id}`)}}>Order Food !!</button>
+                      <button className="bg-green-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={() => {navigate(`/order/${clickTable._id}`)}}>Order Food !!</button> 
                     </div>
+                    <div>
+                      <button className=" w-full mt-4 bg-purple-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={HandleOrder}>Explore the order</button>
+                    </div>
+                 </div>
+                    
                   ) : (
                     <Dialog>
                       <DialogTrigger asChild>
