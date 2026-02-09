@@ -78,12 +78,16 @@ function Order() {
 const handleSubmit = async (e) => {
   e.preventDefault();
 
+  // Calculate total amount
+  const totalAmount = formData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
   const payload = {
     customerNotes: formData.customerNotes,
     items: formData.items.map((item) => ({
       dish: item._id,
       qty: String(item.quantity), // backend expects string
     })),
+    totalAmount: totalAmount,
   };
 
   console.log("Submitting order payload:", payload);
@@ -236,10 +240,13 @@ const handleSubmit = async (e) => {
                                 </Button>
                               </div>
                             </div>
+                           
                           </div>
+                          
                         ))}
                       </div>
                     )}
+                     <div className="text-end text-xl text-gray-500 mt-1">Total Amount: ₹{formData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)}</div>
                   </div>
                 </div>
 

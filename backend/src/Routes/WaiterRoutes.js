@@ -371,14 +371,15 @@ router.post('/createOrder/:tableId', AuthMiddleware, async (req, res) => {
         console.log("Table found:", table);
         const customerName = table.occupiedByName;
         const customerNumber = table.occupiedByNumber;
-        const { items , customerNotes } = req.body;
+        const { items , customerNotes, totalAmount } = req.body;
          
          const newOrder = new Order({
             tableId,
             items,
             customerName,
             customerNumber,
-            customerNotes
+            customerNotes,
+            totalAmount: totalAmount || 0
          });
             await newOrder.save();
             console.log("Order created successfully:", newOrder);

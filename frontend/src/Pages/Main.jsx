@@ -19,11 +19,12 @@ import { Label } from "../Components/ui/label"
 
 function Main() {
    const navigate = useNavigate();
-  const [items, setItems] = useState([]);
-  const [food, setFood] = useState([]);
+
+
   const [tables, setTables] = useState([]);
   const [user, setUser] = useState(null);
   const [clickTable, setClickTable] = useState(null);
+  const [order, setOrder] = useState(null);
   const [formData, setFormData] = useState({
     tableNumber: "",
     occupiedByName: "",
@@ -31,7 +32,7 @@ function Main() {
   })
 
 
-  const [costumerNotes, setCostumerNotes] = useState("");
+  
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -94,8 +95,10 @@ function Main() {
 
   const HandleOrder = async () => {
     try {
-      const response = await axios.get(`http://localhost:9000/api/waiter/orderDetails/${clickTable._id}`, { withCredentials: true });
-      console.log(response.data);
+      const response = await axios.get(`http://localhost:9000/api/waiter/orderDetails/${clickTable.orderId}`, { withCredentials: true });
+      setOrder(response.data.order);
+      console.log(response.data.order)
+      
     } catch (error) {
       console.log(error)
       toast.error("Failed to get orders.")
@@ -244,21 +247,34 @@ function Main() {
             </div>
 
             {/* Table Section Below Icons - Takes remaining height */}
-            <div className="orders-section flex-1 min-h-0 bg-white/10 backdrop-blur-md rounded-lg shadow-lg overflow-auto">
-              {clickTable ? (
-                <div className="p-2 sm:p-4 h-full">
-                  <h3 className="text-white text-sm sm:text-lg font-bold mb-2 sm:mb-3">Orders for Table {clickTable.tableNumber}</h3>
-                  <div className="space-y-2">
-                    {/* Add your orders table/list here */}
-                    <p className="text-gray-300 text-xs sm:text-sm">No orders yet</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="h-full flex justify-center items-center p-2 sm:p-4">
-                  <p className="text-gray-400 text-center text-xs sm:text-sm">Select a table to view orders</p>
-                </div>
-              )}
-            </div>
+           <div className='h-92 w-full bg-black rounded-lg'>
+            {clickTable ? 
+            (
+               <div className="h-full flex flex-row p-4">
+                {order && order.items.length>0 ? (
+                  order.items.map((item, index) => (
+                    <div key={index} className="text-white text-sm mb-1 h-60 w-60 p-2 flex flex-col bg-white/10 rounded-lg ml-3 ">
+                     <div>
+                      <img src={item.dish.imageUrl} alt={item.dish.name} className="h-40 w-full object-cover rounded-lg" />
+                     </div>
+                     <div className='flex flex-row justify-between'>
+                      <p className="text-white text-sm mt-3">{item.dish.name}</p>
+                       <p className="text-white text-sm mt-3">Quantity:{item.qty}</p>
+                     </div>
+
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-white text-sm">No order details available</p>
+                )}
+              </div>        
+            ) : (
+              <div className="h-full flex justify-center items-center">
+                <p className="text-white text-sm">Select a table to view details</p>
+              </div>
+            )}
+ 
+           </div>
           </div>
 
           {/* Right section - Fixed width on desktop, full on mobile */}

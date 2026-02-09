@@ -31,6 +31,7 @@ const orderSchema = new mongoose.Schema({
     customerNotes: {
         type: String
     },
+    totalAmount:{type:Number, default:0},
     paymentStatus: {
         type: String,
         enum: ['Pending', 'Completed'],
