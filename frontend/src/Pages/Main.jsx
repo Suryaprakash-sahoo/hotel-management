@@ -18,7 +18,7 @@ import { Input } from "../Components/ui/input"
 import { Label } from "../Components/ui/label"
 
 function Main() {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 
 
   const [tables, setTables] = useState([]);
@@ -32,7 +32,7 @@ function Main() {
   })
 
 
-  
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -49,11 +49,11 @@ function Main() {
     }
   }
 
-  const HandleCreate = async(e) => {
+  const HandleCreate = async (e) => {
     e.preventDefault();
-    try{
+    try {
 
-       const response = await axios.post(`http://localhost:9000/api/waiter/createOrder/${clickTable._id}`, formData, { withCredentials: true });
+      const response = await axios.post(`http://localhost:9000/api/waiter/createOrder/${clickTable._id}`, formData, { withCredentials: true });
 
     } catch (error) {
       toast.error(`${error.message}`)
@@ -98,7 +98,7 @@ function Main() {
       const response = await axios.get(`http://localhost:9000/api/waiter/orderDetails/${clickTable.orderId}`, { withCredentials: true });
       setOrder(response.data.order);
       console.log(response.data.order)
-      
+
     } catch (error) {
       console.log(error)
       toast.error("Failed to get orders.")
@@ -127,10 +127,10 @@ function Main() {
       }
     };
     fetchTables();
-  }, []);    
+  }, []);
 
 
-  
+
 
   return (
     <>
@@ -220,7 +220,7 @@ function Main() {
         </div>
 
 
-        <div className="w-full px-2 sm:p-4 flex flex-col lg:flex-row gap-2 sm:gap-4 flex-1 min-h-0" style={{height: 'calc(100vh - 100px)'}}>
+        <div className="w-full px-2 sm:p-4 flex flex-col lg:flex-row gap-2 sm:gap-4 flex-1 min-h-0" style={{ height: 'calc(100vh - 100px)' }}>
           {/* Left section - Takes full available height */}
           <div className="flex flex-col gap-2 sm:gap-4 flex-1 lg:flex-[2] h-full min-h-0">
             {/* Icons Section - Takes only the space it needs */}
@@ -247,35 +247,99 @@ function Main() {
             </div>
 
             {/* Table Section Below Icons - Takes remaining height */}
-           <div className='h-92 w-full bg-black rounded-lg'>
-            {clickTable ? 
-            (
-               <div className="h-full flex flex-row p-4">
-                {order && order.items.length>0 ? (
-                  order.items.map((item, index) => (
-                    <div key={index} className="text-white text-sm mb-1 h-60 w-60 p-2 flex flex-col bg-white/10 rounded-lg ml-3 ">
-                     <div>
-                      <img src={item.dish.imageUrl} alt={item.dish.name} className="h-40 w-full object-cover rounded-lg" />
-                     </div>
-                     <div className='flex flex-row justify-between'>
-                      <p className="text-white text-sm mt-3">{item.dish.name}</p>
-                       <p className="text-white text-sm mt-3">Quantity:{item.qty}</p>
-                     </div>
+           <div className="h-[500px] w-full bg-black rounded-xl overflow-hidden">
+  {clickTable ? (
+    <div className="h-full flex flex-col p-4">
 
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-white text-sm">No order details available</p>
-                )}
-              </div>        
-            ) : (
-              <div className="h-full flex justify-center items-center">
-                <p className="text-white text-sm">Select a table to view details</p>
-              </div>
-            )}
- 
-           </div>
+      {order && order.items.length > 0 ? (
+        <>
+          {/* Scrollable Items Section */}
+          <div className="flex-1 overflow-y-auto pr-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {order.items.map((item, index) => (
+                <div
+                  key={index}
+                  className="bg-white/10 backdrop-blur-md rounded-xl p-3 text-white shadow-lg"
+                >
+                  <img
+                    src={item.dish.imageUrl}
+                    alt={item.dish.name}
+                    className="h-40 w-full object-cover rounded-lg"
+                  />
+
+                  <div className="mt-3 flex justify-between text-sm">
+                    <p className="font-semibold">{item.dish.name}</p>
+                    <p>Qty: {item.qty}</p>
+                  </div>
+
+                  <div className="mt-1 text-sm text-gray-300">
+                    ₹ {item.dish.price}
+                  </div>
+
+                  <div className="mt-2 text-sm font-semibold text-green-400">
+                    Subtotal: ₹ {item.totalAmount}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
+
+          {/* Bottom Section */}
+          <div className="border-t border-white/20 pt-4 mt-4">
+            {/* Total */}
+            <div className="flex justify-between text-white font-semibold mb-3">
+              <span>Total</span>
+              <span>
+                ₹{" "}
+                {order.items.reduce(
+                  (sum, item) => sum + item.dish.price * item.qty,
+                  0
+                )}
+              </span>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 transition-all px-4 py-2 rounded-lg text-white"
+                onClick={() => console.log("Add More")}
+              >
+                Add More
+              </button>
+
+              <button
+                disabled={order.items.length === 0}
+                className={`w-full sm:w-auto px-4 py-2 rounded-lg text-white transition-all ${
+                  order.items.length === 0
+                    ? "bg-gray-500 cursor-not-allowed"
+                    : "bg-green-500 hover:bg-green-600"
+                }`}
+                onClick={() => console.log("Make Bill")}
+              >
+                Make Bill
+              </button>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="flex-1 flex justify-center items-center text-center">
+          <p className="text-gray-300 text-sm">
+            Click on the explore button to view order details
+          </p>
+        </div>
+      )}
+    </div>
+  ) : (
+    <div className="h-full flex justify-center items-center text-center">
+      <p className="text-gray-300 text-sm">
+        Select a table to view details
+      </p>
+    </div>
+  )}
+</div>
+
+          </div>
+         
 
           {/* Right section - Fixed width on desktop, full on mobile */}
           <div className="table-details w-full sm:w-110 bg-white/10 backdrop-blur-md rounded-lg shadow-lg overflow-auto lg:flex-shrink-0">
@@ -313,16 +377,24 @@ function Main() {
 
                 <div className="book mt-4 sm:mt-6">
                   {clickTable.occupied ? (
-                 <div className="flex flex-col ">
-                     <div className='flex flex-col sm:flex-row gap-1 sm:gap-2'>
-                      <button className="bg-red-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={HandleCancel}>Cancel Booking</button>
-                      <button className="bg-green-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={() => {navigate(`/order/${clickTable._id}`)}}>Order Food !!</button> 
+                    <div className="flex flex-col ">
+                      <div className='flex flex-col sm:flex-row gap-1 sm:gap-2'>
+                        <button className="bg-red-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={HandleCancel}>Cancel Booking</button>
+                        {clickTable.orderId ? (
+                          <button className="bg-green-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" >Add More</button>
+                        ) : (
+                          <button className="bg-green-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={() => { navigate(`/order/${clickTable._id}`) }}>Order Food !!</button>
+                        )}
+
+                      </div>
+                      <div>
+                        <button className=" w-full mt-4 bg-purple-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={HandleOrder}>Explore the order</button>
+                      </div>
+                       <div>
+                        <button className=" w-full mt-4 bg-purple-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" >Make the Payment</button>
+                      </div>
                     </div>
-                    <div>
-                      <button className=" w-full mt-4 bg-purple-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={HandleOrder}>Explore the order</button>
-                    </div>
-                 </div>
-                    
+
                   ) : (
                     <Dialog>
                       <DialogTrigger asChild>
@@ -376,11 +448,11 @@ function Main() {
               </div>
             )}
           </div>
-          
 
-           
 
-           
+
+
+
         </div>
       </div>
     </>
