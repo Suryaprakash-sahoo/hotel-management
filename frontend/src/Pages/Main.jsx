@@ -105,6 +105,8 @@ function Main() {
     }
   }
 
+  
+
   const ClickDashboard = async () => {
     try {
       const response = await axios.get("http://localhost:9000/api/waiter/dashboard", { withCredentials: true });
@@ -302,7 +304,7 @@ function Main() {
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 transition-all px-4 py-2 rounded-lg text-white"
-                onClick={() => console.log("Add More")}
+                onClick={() => navigate(`/add-item/${clickTable._id}`)}
               >
                 Add More
               </button>

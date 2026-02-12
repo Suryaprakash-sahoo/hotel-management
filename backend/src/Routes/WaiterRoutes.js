@@ -384,6 +384,7 @@ router.post('/createOrder/:tableId', AuthMiddleware, async (req, res) => {
             await newOrder.save();
             console.log("Order created successfully:", newOrder);
              table.orderId = newOrder._id;
+             table.totalAmount= newOrder.totalAmount;
              await table.save(); 
           res.status(201).json({
             success: true,
@@ -407,7 +408,7 @@ router.post('/createOrder/:tableId', AuthMiddleware, async (req, res) => {
 router.put('/addItems/:orderId', AuthMiddleware, async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { items } = req.body; // Changed: expecting items array
+    const { items , totalAmount } = req.body; // Changed: expecting items array
 
     const order = await Order.findById(orderId);
     if (!order) {
@@ -424,6 +425,7 @@ router.put('/addItems/:orderId', AuthMiddleware, async (req, res) => {
         qty: Number(item.qty)
       });
     });
+    console.log("added items to order successfully:", order);
 
     await order.save();
 

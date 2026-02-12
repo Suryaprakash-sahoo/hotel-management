@@ -5,6 +5,7 @@ import Home from './Pages/Home.jsx'
 import Auth from './Pages/Auth.jsx'
 import Main from './Pages/Main.jsx'
 import Order from './Pages/Order.jsx'
+import AddItem from './Pages/AddItem.jsx'
 
 function App() {
   return (
@@ -14,6 +15,8 @@ function App() {
           <Route path="/auth" element={<Auth />} />
           <Route path="/home" element={<Main />} />
           <Route path="/order/:tableId" element={<Order />} />
+          <Route path="/add-item/:tableId" element={<AddItem />} />
+
           
         </Routes>
 
