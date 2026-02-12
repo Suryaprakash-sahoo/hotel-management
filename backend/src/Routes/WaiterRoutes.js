@@ -408,7 +408,10 @@ router.post('/createOrder/:tableId', AuthMiddleware, async (req, res) => {
 router.put('/addItems/:orderId', AuthMiddleware, async (req, res) => {
   try {
     const { orderId } = req.params;
+    
     const { items , totalAmount } = req.body; // Changed: expecting items array
+    
+     console.log(req.body);
 
     const order = await Order.findById(orderId);
     if (!order) {
@@ -425,7 +428,13 @@ router.put('/addItems/:orderId', AuthMiddleware, async (req, res) => {
         qty: Number(item.qty)
       });
     });
-    console.log("added items to order successfully:", order);
+    const table = await Table.findById(order.tableId);
+    console.log("already pending amount: ", table.totalAmount);
+     table.totalAmount += totalAmount;
+     console.log("new total amount: ", table.totalAmount);
+   table.save();
+
+    
 
     await order.save();
 

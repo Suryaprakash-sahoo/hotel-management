@@ -279,7 +279,7 @@ function Main() {
                   </div>
 
                   <div className="mt-2 text-sm font-semibold text-green-400">
-                    Subtotal: ₹ {item.totalAmount}
+                    Subtotal: ₹ {item.dish.price * item.qty}
                   </div>
                 </div>
               ))}
