@@ -97,7 +97,7 @@ function Main() {
     try {
       const response = await axios.get(`http://localhost:9000/api/waiter/orderDetails/${clickTable.orderId}`, { withCredentials: true });
       setOrder(response.data.order);
-      console.log(response.data.order)
+      
 
     } catch (error) {
       console.log(error)
@@ -309,17 +309,38 @@ function Main() {
                 Add More
               </button>
 
-              <button
-                disabled={order.items.length === 0}
-                className={`w-full sm:w-auto px-4 py-2 rounded-lg text-white transition-all ${
-                  order.items.length === 0
-                    ? "bg-gray-500 cursor-not-allowed"
-                    : "bg-green-500 hover:bg-green-600"
-                }`}
-                onClick={() => console.log("Make Bill")}
-              >
-                Make Bill
-              </button>
+              <Dialog>
+  <DialogTrigger asChild>
+    <button className="w-full sm:w-auto bg-green-500 hover:bg-green-600 transition-all px-4 py-2 rounded-lg text-white">
+      Make Payment
+    </button>
+  </DialogTrigger>
+
+  <DialogContent className="sm:max-w-[700px] w-[95%] h-[60%] bg-black rounded-lg p-4 text-white">
+
+    <DialogHeader>
+      <DialogTitle>Make Payment</DialogTitle>
+      <DialogDescription>
+        Please 
+      </DialogDescription>
+    </DialogHeader>
+
+    <div className="whole flex flex-row sm:flex-col  ">
+      <div className="orderDetails mt-2 p-3 text-white">
+        <p className="text-lg font-semibold mb-2">Order Summary</p>
+        <p className="text-sm mb-1">
+          Table Number: {clickTable?.tableNumber}
+        </p>
+        <p className="text-sm mb-1">
+          Customer Name: {clickTable?.occupiedByName}
+        </p>
+      </div>
+
+      <div className="scanner"></div>
+    </div>
+  </DialogContent>
+</Dialog>
+
             </div>
           </div>
         </>

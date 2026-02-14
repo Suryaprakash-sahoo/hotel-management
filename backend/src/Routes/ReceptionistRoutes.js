@@ -9,24 +9,45 @@ const Table = require('../models/tableModel.js')
 
 const router = express.Router();
 
-router.get('/getAllOrders', AuthMiddleware, async (req, res) => {
-    try {
-        const orders = await order.find({paymentStatus: 'Pending'});
-        res.status(200).send({
-            success: true,
-            message: 'Orders fetched successfully',
-            orders
-        });
+// router.get('/getAllOrders', AuthMiddleware, async (req, res) => {
+//     try {
+//         const orders = await order.find({paymentStatus: 'Pending'});
+//         res.status(200).send({
+//             success: true,
+//             message: 'Orders fetched successfully',
+//             orders
+//         });
         
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).send({
+//             success: false,
+//             message: 'Error getting orders',
+//             error,
+//         });
+//     }
+// });
+
+//get the order by Id
+router.get('/getOrder/:orderId' , AuthMiddleware , async (req , res)=> {
+  try {
+     const {orderId} = req.params;
+     const existingOrder = await order.findById(orderId);
+
+     if(!existingOrder){
+        return res.status(404).json({
             success: false,
-            message: 'Error getting orders',
-            error,
+            message: 'Order not found',
         });
-    }
-});
+     }
+     res.status(200).json({
+        success: true,
+        order: existingOrder
+     })
+  } catch (error) {
+    console.log(error);
+  }
+})
 
 // create the bill
 router.get('/createBill/:orderId', AuthMiddleware, async (req, res) => {
@@ -44,7 +65,6 @@ router.get('/createBill/:orderId', AuthMiddleware, async (req, res) => {
       });
     }
 
-//  console.log(existingOrder);
  const orderedItems = [];
  
 
@@ -69,10 +89,6 @@ router.get('/createBill/:orderId', AuthMiddleware, async (req, res) => {
 
  const grandTotal = orderedItems.reduce((acc, item) => acc + item.total, 0);
  console.log("Grand Total: ", grandTotal);
-
-
-
-
 
  const newBill = new Bill({
     orderId: existingOrder._id,
