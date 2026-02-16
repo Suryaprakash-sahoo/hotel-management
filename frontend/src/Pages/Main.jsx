@@ -6,6 +6,14 @@ import Emoji from '../assets/emoji.png'
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
 import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "../Components/ui/combobox"
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -16,6 +24,10 @@ import {
 import { Button } from "../Components/ui/button"
 import { Input } from "../Components/ui/input"
 import { Label } from "../Components/ui/label"
+
+
+
+
 
 function Main() {
   const navigate = useNavigate();
@@ -309,37 +321,70 @@ function Main() {
                 Add More
               </button>
 
-              <Dialog>
+<Dialog>
   <DialogTrigger asChild>
     <button className="w-full sm:w-auto bg-green-500 hover:bg-green-600 transition-all px-4 py-2 rounded-lg text-white">
       Make Payment
     </button>
   </DialogTrigger>
 
-  <DialogContent className="sm:max-w-[700px] w-[95%] h-[60%] bg-black rounded-lg p-4 text-white">
+  <DialogContent className="sm:max-w-[700px] w-[95%] max-h-[85vh] overflow-y-auto bg-black rounded-xl p-6 text-white">
 
     <DialogHeader>
-      <DialogTitle>Make Payment</DialogTitle>
-      <DialogDescription>
-        Please 
+      <DialogTitle className="text-xl font-semibold">
+        Make Payment
+      </DialogTitle>
+      <DialogDescription className="text-gray-400 text-sm">
+        Please confirm the order details before proceeding.
       </DialogDescription>
     </DialogHeader>
 
-    <div className="whole flex flex-row sm:flex-col  ">
-      <div className="orderDetails mt-2 p-3 text-white">
-        <p className="text-lg font-semibold mb-2">Order Summary</p>
-        <p className="text-sm mb-1">
-          Table Number: {clickTable?.tableNumber}
-        </p>
-        <p className="text-sm mb-1">
-          Customer Name: {clickTable?.occupiedByName}
-        </p>
+    <div className="mt-4 space-y-4">
+
+      {/* Order Details */}
+      <div className="bg-zinc-900 rounded-lg p-4 space-y-1 text-sm">
+        <h2 className="text-lg font-bold mb-2">Order Summary</h2>
+
+        <p>Table Number: <span className="font-medium">{clickTable?.tableNumber}</span></p>
+        <p>Customer Name: <span className="font-medium">{clickTable?.occupiedByName}</span></p>
+        <p>Customer Number: <span className="font-medium">{clickTable?.occupiedByNumber}</span></p>
       </div>
 
-      <div className="scanner"></div>
+      {/* Ordered Items */}
+      <div className="bg-zinc-900 rounded-lg p-4">
+        <h2 className="text-md font-semibold mb-3">Ordered Items</h2>
+
+        <div className="max-h-40 overflow-y-auto pr-2 space-y-2">
+          {order?.items?.map((item, index) => (
+            <div key={index} className="flex justify-between text-sm border-b border-zinc-700 pb-1">
+              <span>{item.dish.name} × {item.qty}</span>
+              <span>₹ {item.dish.price * item.qty}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Total */}
+        <div className="flex justify-between mt-4 text-base font-semibold">
+          <span>Total</span>
+          <span>
+            ₹ {
+              clickTable?.totalAmount || 0
+            }
+          </span>
+        </div>
+
+        <div className="selector">choose payment method : </div>
+      </div>
+
+      {/* Payment Button */}
+      <button className="w-full bg-green-600 hover:bg-green-700 transition-all py-2 rounded-lg font-semibold">
+        Confirm Payment
+      </button>
+
     </div>
   </DialogContent>
 </Dialog>
+
 
             </div>
           </div>
