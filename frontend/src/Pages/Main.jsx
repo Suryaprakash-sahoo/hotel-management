@@ -6,14 +6,6 @@ import Emoji from '../assets/emoji.png'
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
 import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "../Components/ui/combobox"
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -21,6 +13,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../Components/ui/dialog"
+
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxContent,
+  ComboboxList,
+  ComboboxItem,
+  ComboboxValue
+} from "../Components/ui/combobox"
 import { Button } from "../Components/ui/button"
 import { Input } from "../Components/ui/input"
 import { Label } from "../Components/ui/label"
@@ -32,7 +33,7 @@ import { Label } from "../Components/ui/label"
 function Main() {
   const navigate = useNavigate();
 
-
+const [paymentMethod, setPaymentMethod] = useState("")
   const [tables, setTables] = useState([]);
   const [user, setUser] = useState(null);
   const [clickTable, setClickTable] = useState(null);
@@ -373,11 +374,47 @@ function Main() {
           </span>
         </div>
 
-        <div className="selector">choose payment method : </div>
+        <div className="mt-4">
+ 
+
+  
+  <p className="text-xs text-green-400 mt-2">
+  Selected: {paymentMethod}
+</p>
+</div>
+
       </div>
+      <Combobox value={paymentMethod} onValueChange={setPaymentMethod}>
+        <ComboboxInput placeholder="Select payment method..." showClear={paymentMethod !== ""} />
+
+        <ComboboxContent>
+          <ComboboxList>
+            <ComboboxItem value="cash">
+              Cash
+            </ComboboxItem>
+
+            <ComboboxItem value="upi">
+              UPI
+            </ComboboxItem>
+
+            <ComboboxItem value="card">
+              Card
+            </ComboboxItem>
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
 
       {/* Payment Button */}
-      <button className="w-full bg-green-600 hover:bg-green-700 transition-all py-2 rounded-lg font-semibold">
+      <button 
+        className="w-full bg-green-600 hover:bg-green-700 transition-all py-2 rounded-lg font-semibold text-white"
+        onClick={() => {
+          if (paymentMethod) {
+            toast.success(`Payment confirmed via ${paymentMethod}!`);
+          } else {
+            toast.error("Please select a payment method");
+          }
+        }}
+      >
         Confirm Payment
       </button>
 
