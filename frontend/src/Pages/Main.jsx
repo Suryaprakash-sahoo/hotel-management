@@ -34,6 +34,7 @@ function Main() {
   const navigate = useNavigate();
 
   const [paymentMethod, setPaymentMethod] = useState("")
+  const [bill, setBill] = useState(null);
   const [tables, setTables] = useState([]);
   const [user, setUser] = useState(null);
   const [clickTable, setClickTable] = useState(null);
@@ -121,7 +122,7 @@ function Main() {
   const HandleUpdation = async() => {
     try{
       const response = await axios.post(`http://localhost:9000/api/receptionist/confirmPayment/${clickTable.orderId}`, {paymentThrough: paymentMethod}, { withCredentials: true });
-      console.log(response.data);
+      setBill(response.data.bill._id);
       toast.success("Payment status updated successfully!")
     } catch(error){
       console.log(error)
