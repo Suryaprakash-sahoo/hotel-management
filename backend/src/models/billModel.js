@@ -28,6 +28,11 @@ const billSchema = new mongoose.Schema({
         type: String,
         enum: ['Pending', 'Paid'],
         default: 'Pending'
+    },
+    paymentThrough: {
+        type: String,
+            enum: ['Cash', 'Card', 'UPI'],
+            
     }
     
 }, { timestamps: true });

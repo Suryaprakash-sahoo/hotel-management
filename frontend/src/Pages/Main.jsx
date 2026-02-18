@@ -33,7 +33,7 @@ import { Label } from "../Components/ui/label"
 function Main() {
   const navigate = useNavigate();
 
-const [paymentMethod, setPaymentMethod] = useState("")
+  const [paymentMethod, setPaymentMethod] = useState("")
   const [tables, setTables] = useState([]);
   const [user, setUser] = useState(null);
   const [clickTable, setClickTable] = useState(null);
@@ -110,7 +110,7 @@ const [paymentMethod, setPaymentMethod] = useState("")
     try {
       const response = await axios.get(`http://localhost:9000/api/waiter/orderDetails/${clickTable.orderId}`, { withCredentials: true });
       setOrder(response.data.order);
-      
+
 
     } catch (error) {
       console.log(error)
@@ -118,7 +118,18 @@ const [paymentMethod, setPaymentMethod] = useState("")
     }
   }
 
-  
+  const HandleUpdation = async() => {
+    try{
+      const response = await axios.post(`http://localhost:9000/api/receptionist/confirmPayment/${clickTable.orderId}`, {paymentThrough: paymentMethod}, { withCredentials: true });
+      console.log(response.data);
+      toast.success("Payment status updated successfully!")
+    } catch(error){
+      console.log(error)
+      toast.error("Failed to update payment status.")
+    }
+  }
+
+
 
   const ClickDashboard = async () => {
     try {
@@ -262,189 +273,178 @@ const [paymentMethod, setPaymentMethod] = useState("")
             </div>
 
             {/* Table Section Below Icons - Takes remaining height */}
-           <div className="h-[500px] w-full bg-black rounded-xl overflow-hidden">
-  {clickTable ? (
-    <div className="h-full flex flex-col p-4">
+            <div className="h-[500px] w-full bg-black rounded-xl overflow-hidden">
+              {clickTable ? (
+                <div className="h-full flex flex-col p-4">
 
-      {order && order.items.length > 0 ? (
-        <>
-          {/* Scrollable Items Section */}
-          <div className="flex-1 overflow-y-auto pr-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {order.items.map((item, index) => (
-                <div
-                  key={index}
-                  className="bg-white/10 backdrop-blur-md rounded-xl p-3 text-white shadow-lg"
-                >
-                  <img
-                    src={item.dish.imageUrl}
-                    alt={item.dish.name}
-                    className="h-40 w-full object-cover rounded-lg"
-                  />
+                  {order && order.items.length > 0 ? (
+                    <>
+                      {/* Scrollable Items Section */}
+                      <div className="flex-1 overflow-y-auto pr-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                          {order.items.map((item, index) => (
+                            <div
+                              key={index}
+                              className="bg-white/10 backdrop-blur-md rounded-xl p-3 text-white shadow-lg"
+                            >
+                              <img
+                                src={item.dish.imageUrl}
+                                alt={item.dish.name}
+                                className="h-40 w-full object-cover rounded-lg"
+                              />
 
-                  <div className="mt-3 flex justify-between text-sm">
-                    <p className="font-semibold">{item.dish.name}</p>
-                    <p>Qty: {item.qty}</p>
-                  </div>
+                              <div className="mt-3 flex justify-between text-sm">
+                                <p className="font-semibold">{item.dish.name}</p>
+                                <p>Qty: {item.qty}</p>
+                              </div>
 
-                  <div className="mt-1 text-sm text-gray-300">
-                    ₹ {item.dish.price}
-                  </div>
+                              <div className="mt-1 text-sm text-gray-300">
+                                ₹ {item.dish.price}
+                              </div>
 
-                  <div className="mt-2 text-sm font-semibold text-green-400">
-                    Subtotal: ₹ {item.dish.price * item.qty}
-                  </div>
+                              <div className="mt-2 text-sm font-semibold text-green-400">
+                                Subtotal: ₹ {item.dish.price * item.qty}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Bottom Section */}
+                      <div className="border-t border-white/20 pt-4 mt-4">
+                        {/* Total */}
+                        <div className="flex justify-between text-white font-semibold mb-3">
+                          <span>Total</span>
+                          <span>
+                            ₹{" "}
+                            {order.items.reduce(
+                              (sum, item) => sum + item.dish.price * item.qty,
+                              0
+                            )}
+                          </span>
+                        </div>
+
+                        {/* Buttons */}
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <button
+                            className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 transition-all px-4 py-2 rounded-lg text-white"
+                            onClick={() => navigate(`/add-item/${clickTable._id}`)}>
+                            Add More
+                          </button>
+
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <button className="w-full sm:w-auto bg-green-500 hover:bg-green-600 transition-all px-4 py-2 rounded-lg text-white">
+                                Make Payment
+                              </button>
+                            </DialogTrigger>
+
+                            <DialogContent className="sm:max-w-[700px] w-[95%] max-h-[85vh] overflow-y-auto bg-black rounded-xl p-6 text-white">
+
+                              <DialogHeader>
+                                <DialogTitle className="text-xl font-semibold">
+                                  Make Payment
+                                </DialogTitle>
+                                <DialogDescription className="text-gray-400 text-sm">
+                                  Please confirm the order details before proceeding.
+                                </DialogDescription>
+                              </DialogHeader>
+
+                              <div className="mt-4 space-y-4">
+
+                                {/* Order Details */}
+                                <div className="bg-zinc-900 rounded-lg p-4 space-y-1 text-sm">
+                                  <h2 className="text-lg font-bold mb-2">Order Summary</h2>
+
+                                  <p>Table Number: <span className="font-medium">{clickTable?.tableNumber}</span></p>
+                                  <p>Customer Name: <span className="font-medium">{clickTable?.occupiedByName}</span></p>
+                                  <p>Customer Number: <span className="font-medium">{clickTable?.occupiedByNumber}</span></p>
+                                </div>
+
+                                {/* Ordered Items */}
+                                <div className="bg-zinc-900 rounded-lg p-4">
+                                  <h2 className="text-md font-semibold mb-3">Ordered Items</h2>
+
+                                  <div className="max-h-40 overflow-y-auto pr-2 space-y-2">
+                                    {order?.items?.map((item, index) => (
+                                      <div key={index} className="flex justify-between text-sm border-b border-zinc-700 pb-1">
+                                        <span>{item.dish.name} × {item.qty}</span>
+                                        <span>₹ {item.dish.price * item.qty}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+
+                                  {/* Total */}
+                                  <div className="flex justify-between mt-4 text-base font-semibold">
+                                    <span>Total</span>
+                                    <span>
+                                      ₹ {
+                                        clickTable?.totalAmount || 0
+                                      }
+                                    </span>
+                                  </div>
+
+                                  <div className="mt-4">
+
+
+
+                                    <p className="text-xs text-green-400 mt-2">
+                                      Selected: {paymentMethod}
+                                    </p>
+                                  </div>
+
+                                </div>
+                                <Combobox value={paymentMethod} onValueChange={setPaymentMethod}>
+                                  <ComboboxInput placeholder="Select payment method..." showClear={paymentMethod !== ""} />
+
+                                  <ComboboxContent>
+                                    <ComboboxList>
+                                      <ComboboxItem value="cash">Cash</ComboboxItem>
+                                      <ComboboxItem value="upi">UPI</ComboboxItem>
+                                      <ComboboxItem value="card"> Card </ComboboxItem>
+                                    </ComboboxList>
+                                  </ComboboxContent>
+                                </Combobox>
+
+                                {/* Payment Button */}
+                                <button
+                                  className="w-full bg-green-600 hover:bg-green-700 transition-all py-2 rounded-lg font-semibold text-white"
+                                  onClick={HandleUpdation}
+                                  
+                                >
+                                  Confirm Payment
+                                </button>
+
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+
+                         
+
+
+
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex-1 flex justify-center items-center text-center">
+                      <p className="text-gray-300 text-sm">
+                        Click on the explore button to view order details
+                      </p>
+                    </div>
+                  )}
                 </div>
-              ))}
+              ) : (
+                <div className="h-full flex justify-center items-center text-center">
+                  <p className="text-gray-300 text-sm">
+                    Select a table to view details
+                  </p>
+                </div>
+              )}
             </div>
+
           </div>
 
-          {/* Bottom Section */}
-          <div className="border-t border-white/20 pt-4 mt-4">
-            {/* Total */}
-            <div className="flex justify-between text-white font-semibold mb-3">
-              <span>Total</span>
-              <span>
-                ₹{" "}
-                {order.items.reduce(
-                  (sum, item) => sum + item.dish.price * item.qty,
-                  0
-                )}
-              </span>
-            </div>
-
-            {/* Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 transition-all px-4 py-2 rounded-lg text-white"
-                onClick={() => navigate(`/add-item/${clickTable._id}`)}
-              >
-                Add More
-              </button>
-
-<Dialog>
-  <DialogTrigger asChild>
-    <button className="w-full sm:w-auto bg-green-500 hover:bg-green-600 transition-all px-4 py-2 rounded-lg text-white">
-      Make Payment
-    </button>
-  </DialogTrigger>
-
-  <DialogContent className="sm:max-w-[700px] w-[95%] max-h-[85vh] overflow-y-auto bg-black rounded-xl p-6 text-white">
-
-    <DialogHeader>
-      <DialogTitle className="text-xl font-semibold">
-        Make Payment
-      </DialogTitle>
-      <DialogDescription className="text-gray-400 text-sm">
-        Please confirm the order details before proceeding.
-      </DialogDescription>
-    </DialogHeader>
-
-    <div className="mt-4 space-y-4">
-
-      {/* Order Details */}
-      <div className="bg-zinc-900 rounded-lg p-4 space-y-1 text-sm">
-        <h2 className="text-lg font-bold mb-2">Order Summary</h2>
-
-        <p>Table Number: <span className="font-medium">{clickTable?.tableNumber}</span></p>
-        <p>Customer Name: <span className="font-medium">{clickTable?.occupiedByName}</span></p>
-        <p>Customer Number: <span className="font-medium">{clickTable?.occupiedByNumber}</span></p>
-      </div>
-
-      {/* Ordered Items */}
-      <div className="bg-zinc-900 rounded-lg p-4">
-        <h2 className="text-md font-semibold mb-3">Ordered Items</h2>
-
-        <div className="max-h-40 overflow-y-auto pr-2 space-y-2">
-          {order?.items?.map((item, index) => (
-            <div key={index} className="flex justify-between text-sm border-b border-zinc-700 pb-1">
-              <span>{item.dish.name} × {item.qty}</span>
-              <span>₹ {item.dish.price * item.qty}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Total */}
-        <div className="flex justify-between mt-4 text-base font-semibold">
-          <span>Total</span>
-          <span>
-            ₹ {
-              clickTable?.totalAmount || 0
-            }
-          </span>
-        </div>
-
-        <div className="mt-4">
- 
-
-  
-  <p className="text-xs text-green-400 mt-2">
-  Selected: {paymentMethod}
-</p>
-</div>
-
-      </div>
-      <Combobox value={paymentMethod} onValueChange={setPaymentMethod}>
-        <ComboboxInput placeholder="Select payment method..." showClear={paymentMethod !== ""} />
-
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxItem value="cash">
-              Cash
-            </ComboboxItem>
-
-            <ComboboxItem value="upi">
-              UPI
-            </ComboboxItem>
-
-            <ComboboxItem value="card">
-              Card
-            </ComboboxItem>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-
-      {/* Payment Button */}
-      <button 
-        className="w-full bg-green-600 hover:bg-green-700 transition-all py-2 rounded-lg font-semibold text-white"
-        onClick={() => {
-          if (paymentMethod) {
-            toast.success(`Payment confirmed via ${paymentMethod}!`);
-          } else {
-            toast.error("Please select a payment method");
-          }
-        }}
-      >
-        Confirm Payment
-      </button>
-
-    </div>
-  </DialogContent>
-</Dialog>
-
-
-            </div>
-          </div>
-        </>
-      ) : (
-        <div className="flex-1 flex justify-center items-center text-center">
-          <p className="text-gray-300 text-sm">
-            Click on the explore button to view order details
-          </p>
-        </div>
-      )}
-    </div>
-  ) : (
-    <div className="h-full flex justify-center items-center text-center">
-      <p className="text-gray-300 text-sm">
-        Select a table to view details
-      </p>
-    </div>
-  )}
-</div>
-
-          </div>
-         
 
           {/* Right section - Fixed width on desktop, full on mobile */}
           <div className="table-details w-full sm:w-110 bg-white/10 backdrop-blur-md rounded-lg shadow-lg overflow-auto lg:flex-shrink-0">
@@ -495,7 +495,7 @@ const [paymentMethod, setPaymentMethod] = useState("")
                       <div>
                         <button className=" w-full mt-4 bg-purple-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={HandleOrder}>Explore the order</button>
                       </div>
-                       <div>
+                      <div>
                         <button className=" w-full mt-4 bg-purple-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" >Make the Payment</button>
                       </div>
                     </div>

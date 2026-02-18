@@ -50,75 +50,77 @@ router.get('/getOrder/:orderId' , AuthMiddleware , async (req , res)=> {
 })
 
 // create the bill
-router.get('/createBill/:orderId', AuthMiddleware, async (req, res) => {
+router.post('/confirmPayment/:orderId', AuthMiddleware, async (req, res) => {
   try {
     const { orderId } = req.params;
+   
 
-    const existingOrder = await order
-      .findById(orderId)
-      
+    // 1️⃣ Find Order
+    const existingOrder = await order.findById(orderId);
 
     if (!existingOrder) {
       return res.status(404).json({
         success: false,
-        message: 'Order not found',
+        message: "Order not found"
       });
     }
 
- const orderedItems = [];
- 
-
- for( const item of existingOrder.items){
-    const foodItem = await food.findById(item.dish);
-    if(!foodItem){
-        return res.status(404).json({
-            success: false,
-            message: `Food item with id ${item.dish} not found`,
-        });
-    } else {
-        orderedItems.push({
-            name: foodItem.name,
-            qty: item.qty,
-            price: foodItem.price,
-            total: foodItem.price * item.qty
-        })
-    } 
- }
-
- console.log(orderedItems);
-
- const grandTotal = orderedItems.reduce((acc, item) => acc + item.total, 0);
- console.log("Grand Total: ", grandTotal);
-
- const newBill = new Bill({
-    orderId: existingOrder._id,
-    tableId: existingOrder.tableId,
-    customerName: existingOrder.customerName,
-    customerNumber: existingOrder.customerNumber,
-    totalAmount: grandTotal,
     
-  });
-  await newBill.save();
 
+    if (existingOrder.paymentStatus === 'Pending') {
+      //confirm the payment
+      existingOrder.paymentStatus = 'Completed';
+      await existingOrder.save();
+      console.log(existingOrder);
+    }
 
+    //find the table by Id
+    const tableId = existingOrder.tableId;
+      const existingTable = await Table.findById(tableId);
+      console.log(existingTable);
+
+    if (!existingTable) {
+      return res.status(404).json({
+        success: false,
+        message: "Table not found"
+      });
+    }
+
+    if(existingTable.paymentStatus === 'pending'){
+        existingTable.paymentStatus = 'paid';
+        await existingTable.save();
+    }
+
+    const newBill = new Bill({
+      tableId: existingTable._id,
+      orderId: existingOrder._id,
+      customerName: existingTable.occupiedByName,
+      customerNumber: existingTable.occupiedByNumber,
+      totalAmount: existingOrder.totalAmount,
+      paymentStatus: 'Paid',
+      paymentThrough: req.body.paymentMethod
+    });
+    await newBill.save();
 
     res.status(200).json({
       success: true,
-      tableId: existingOrder.tableId,
-      customerName: existingOrder.customerName,
-      customerNumber: existingOrder.customerNumber,
-      orderedItems   
+      message: "Payment confirmed and bill generated",
+      bill: newBill
     });
 
   } catch (error) {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: 'Error creating bill',
-      error,
+      message: "Something went wrong"
     });
   }
 });
+
+
+
+
+
 
 //get All bills
 router.get('/bills', AuthMiddleware, async (req, res) => {
