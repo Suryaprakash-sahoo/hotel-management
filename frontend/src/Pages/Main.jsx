@@ -124,9 +124,30 @@ function Main() {
       const response = await axios.post(`http://localhost:9000/api/receptionist/confirmPayment/${clickTable.orderId}`, {paymentThrough: paymentMethod}, { withCredentials: true });
       setBill(response.data.bill._id);
       toast.success("Payment status updated successfully!")
+      
+
     } catch(error){
       console.log(error)
       toast.error("Failed to update payment status.")
+    }
+  }
+
+  const HandleAssign = async() => {
+    try{
+      const response = await axios.post(`http://localhost:9000/api/receptionist/updateTableStatus/${clickTable._id}`, {}, { withCredentials: true });
+      setClickTable(null);
+      setOrder(null);
+      setBill(null);
+      setPaymentMethod("");
+      setFormData({
+        tableNumber: "",
+        occupiedByName: "",
+        occupiedByNumber: "",
+      })
+      window.location.reload();
+      toast.success("Table is ready for the next customer!")
+    }catch(error){
+      console.log(error)
     }
   }
 
@@ -473,12 +494,12 @@ function Main() {
                   <p className='text-white text-xs sm:text-sm'>Capacity: {clickTable.capacity}</p>
                 </div>
                 <div className="content flex flex-col sm:flex-row items-start sm:items-center justify-between mt-3 sm:mt-4 gap-1 sm:gap-0">
-                  <p className='text-white text-xs sm:text-sm'>Customer Name: {clickTable.occupiedByName ? clickTable.occupiedByName : "--"}</p>
-                  <p className='text-white text-xs sm:text-sm'>Payment Status: {clickTable.paymentStatus ? "Not paid" : "--"}</p>
+                  <p className='text-white text-xs sm:text-sm'>Customer Name: {clickTable.occupiedByName ? clickTable.occupiedByName : "Unoccupied"}</p>
+                  <p className='text-white text-xs sm:text-sm'>Payment Status: {clickTable.paymentStatus ? clickTable.paymentStatus : "Undefined"}</p>
                 </div>
                 <div className="content flex flex-col sm:flex-row items-start sm:items-center justify-between mt-3 sm:mt-4 gap-1 sm:gap-0">
-                  <p className='text-white text-xs sm:text-sm'>Amount to Pay: {clickTable.totalAmount ? clickTable.totalAmount : "--"}</p>
-                  <p className='text-white text-xs sm:text-sm'>Order Id: {clickTable.orderId ? clickTable.orderId : "--"}</p>
+                  <p className='text-white text-xs sm:text-sm'>Amount to Pay: {clickTable.totalAmount ? clickTable.totalAmount : "order not placed"}</p>
+                  <p className='text-white text-xs sm:text-sm'>Order Id: {clickTable.orderId ? clickTable.orderId : "order not placed"}</p>
                 </div>
 
                 <div className="book mt-4 sm:mt-6">
@@ -497,7 +518,7 @@ function Main() {
                         <button className=" w-full mt-4 bg-purple-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" onClick={HandleOrder}>Explore the order</button>
                       </div>
                       <div>
-                        <button className=" w-full mt-4 bg-purple-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm" >Make the Payment</button>
+                        <button className=" w-full mt-4 bg-purple-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full flex-1 text-xs sm:text-sm"  onClick={HandleAssign}>Make the Payment</button>
                       </div>
                     </div>
 

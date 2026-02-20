@@ -85,7 +85,7 @@ router.post('/confirmPayment/:orderId', AuthMiddleware, async (req, res) => {
         message: "Table not found"
       });
     }
-
+    
     if(existingTable.paymentStatus === 'pending'){
         existingTable.paymentStatus = 'paid';
         await existingTable.save();
@@ -140,6 +140,45 @@ router.get('/bills', AuthMiddleware, async (req, res) => {
     });
   }
 });
+
+
+// assign the table to the customer and update the table status
+router.post('/updateTableStatus/:tableId', AuthMiddleware, async (req, res) => {
+  try {
+    const { tableId } = req.params;
+    const selectedTable = await Table.findById(tableId);
+    if (!selectedTable) {
+      return res.status(404).json({
+        success: false,
+        message: 'Table not found',
+      });
+    }
+
+    if (selectedTable.occupied == true) {
+      selectedTable.occupied = false;
+      selectedTable.occupiedByName = null;
+      selectedTable.occupiedByNumber = null;
+      selectedTable.totalOrders = 0;
+      selectedTable.totalAmount = 0;
+      selectedTable.paymentStatus = null;
+      selectedTable.orderId = null;
+      await selectedTable.save();
+      res.status(200).json({
+        success: true,
+        message: 'Table status updated to unoccupied',
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating table status',
+      error,
+    });
+  }
+})
+ 
+    
 
 //get the bills by id and update the payment status
 router.post('/getBill/:BillId', AuthMiddleware, async (req, res) => {
