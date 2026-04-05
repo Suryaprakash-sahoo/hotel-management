@@ -60,54 +60,48 @@ router.post("/register", async (req, res) => {
 /* ===================== USER LOGIN ===================== */
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    console.log("Login attempt:", email);
+    console.log("🔥 BODY:", req.body);
 
-    // Check user exists
+    const { email, password } = req.body;
+
+    console.log("🔥 EMAIL:", email);
+
     const user = await User.findOne({ email });
+    console.log("🔥 USER:", user);
+
     if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({ message: "User not found" });
     }
 
-    // Check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log("🔥 PASSWORD MATCH:", isPasswordValid);
+
     if (!isPasswordValid) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({ message: "Invalid password" });
     }
 
-    // Check JWT secret
     if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET is missing");
+      console.log("❌ JWT_SECRET missing");
+      throw new Error("JWT_SECRET missing");
     }
 
-    // Generate token
     const token = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    // Set cookie (IMPORTANT for deployed apps)
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,        // 🔥 required for HTTPS (Render)
-      sameSite: "None",    // 🔥 required for cross-origin
+      secure: true,
+      sameSite: "None",
     });
 
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-      },
-    });
+    res.json({ message: "Login success", token });
 
   } catch (error) {
-    console.error("LOGIN ERROR:", error);
+    console.error("💥 LOGIN ERROR:", error);
     res.status(500).json({ message: error.message });
   }
 });
