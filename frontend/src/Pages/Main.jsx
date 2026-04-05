@@ -268,8 +268,7 @@ function Main() {
         </div>
 
 
-        <div className="w-full px-2 sm:p-4 flex flex-col lg:flex-row gap-2 sm:gap-4 flex-1 min-h-0" style={{ height: 'calc(100vh - 100px)' }}>
-          {/* Left section - Takes full available height */}
+<div className="w-full px-2 sm:p-4 flex flex-col lg:flex-row gap-2 sm:gap-4 flex-1 min-h-0 items-stretch" style={{ height: 'calc(100vh - 100px)' }}>          {/* Left section - Takes full available height */}
           <div className="flex flex-col gap-2 sm:gap-4 flex-1 lg:flex-[2] h-full min-h-0">
             {/* Icons Section - Takes only the space it needs */}
             <div className="icons-section bg-white/5 backdrop-blur-sm rounded-lg p-2 sm:p-4">
@@ -469,8 +468,7 @@ function Main() {
 
 
           {/* Right section - Fixed width on desktop, full on mobile */}
-          <div className="table-details w-full lg:w-96 bg-white/10 backdrop-blur-md rounded-lg shadow-lg overflow-auto lg:flex-shrink-0">
-            {clickTable ? (
+<div className="table-details w-full lg:w-96 bg-white/10 backdrop-blur-md rounded-lg shadow-lg overflow-auto lg:flex-shrink-0 h-full">            {clickTable ? (
               <div className="p-2 sm:p-4 flex flex-col">
                 <h2 className="text-white flex text-xl sm:text-3xl mt-1 sm:mt-2 justify-center font-extrabold">Table Details</h2>
                 <div className="box min-h-16 sm:h-20 w-full bg-white/20 rounded-lg mt-3 sm:mt-4 flex flex-col">
