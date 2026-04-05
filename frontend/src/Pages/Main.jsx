@@ -469,7 +469,7 @@ function Main() {
 
 
           {/* Right section - Fixed width on desktop, full on mobile */}
-          <div className="table-details w-full sm:w-110 bg-white/10 backdrop-blur-md rounded-lg shadow-lg overflow-auto lg:flex-shrink-0">
+          <div className="table-details w-full lg:w-96 bg-white/10 backdrop-blur-md rounded-lg shadow-lg overflow-auto lg:flex-shrink-0">
             {clickTable ? (
               <div className="p-2 sm:p-4 flex flex-col">
                 <h2 className="text-white flex text-xl sm:text-3xl mt-1 sm:mt-2 justify-center font-extrabold">Table Details</h2>
