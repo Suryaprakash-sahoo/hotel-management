@@ -1,57 +1,61 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const env = require("dotenv");
+const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 
 const userRoutes = require("./src/Routes/UserRoutes.js");
 const waiterRoutes = require("./src/Routes/WaiterRoutes.js");
 const receptionistRoutes = require("./src/Routes/ReceptionistRoutes.js");
 
-env.config();
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
-// ✅ Allowed origins
-const allowedOrigins = "*";
+/* ===================== CORS FIX ===================== */
 
-// ✅ CORS middleware (robust version)
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://hotel-management-60kr.onrender.com",
+];
+
 app.use(
   cors({
     origin: function (origin, callback) {
-      // allow requests with no origin (like Postman, mobile apps)
+      // allow requests without origin (Postman, mobile apps)
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
+        return callback(null, origin); // 🔥 must return origin
       } else {
-        return callback(new Error("CORS not allowed"));
+        return callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
   })
 );
 
-// ✅ Important for preflight requests
-app.options("*", cors());
+/* ===================== MIDDLEWARE ===================== */
 
-// Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-// Routes
+/* ===================== ROUTES ===================== */
+
 app.use("/api/user", userRoutes);
 app.use("/api/waiter", waiterRoutes);
 app.use("/api/receptionist", receptionistRoutes);
 
-// Test route
+/* ===================== TEST ROUTE ===================== */
+
 app.get("/", (req, res) => {
-  res.send("Hotel Management System API is running");
+  res.send("Hotel Management System API is running 🚀");
 });
 
-// MongoDB connection
+/* ===================== DB CONNECTION ===================== */
+
 mongoose
   .connect(MONGO_URI)
   .then(() => {
@@ -61,7 +65,8 @@ mongoose
     console.error("❌ MongoDB connection error:", err);
   });
 
-// Server start
+/* ===================== SERVER ===================== */
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
