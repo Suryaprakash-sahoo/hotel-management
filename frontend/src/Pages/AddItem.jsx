@@ -94,7 +94,7 @@ const handleSubmit = async (e) => {
 
   try {
     const response = await axios.put(
-      `http://localhost:9000/api/waiter/addItems/${table?.orderId}`,
+      `https://hotel-management-vnsc.onrender.com/api/waiter/addItems/${table?.orderId}`,
       payload,
       { withCredentials: true }
       
@@ -120,7 +120,7 @@ const handleSubmit = async (e) => {
     const fetchTable = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:9000/api/waiter/tableId/${tableId}`,
+          `https://hotel-management-vnsc.onrender.com/api/waiter/tableId/${tableId}`,
           { withCredentials: true }
         );
         setTable(res.data.table);
@@ -138,7 +138,7 @@ const handleSubmit = async (e) => {
     const fetchFood = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:9000/api/waiter/AllFood",
+          "https://hotel-management-vnsc.onrender.com/api/waiter/AllFood",
           { withCredentials: true }
         );
         setFood(res.data.allFood);
