@@ -15,10 +15,7 @@ const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
 // ✅ Allowed origins
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://hotel-management-60kr.onrender.com",
-];
+const allowedOrigins = "*";
 
 // ✅ CORS middleware (robust version)
 app.use(
