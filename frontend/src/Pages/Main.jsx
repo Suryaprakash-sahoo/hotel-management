@@ -54,7 +54,7 @@ function Main() {
 
   const HandleCancel = async () => {
     try {
-      const response = await axios.post(`http://localhost:9000/api/waiter/cancelBooking/${clickTable.tableNumber}`, {},
+      const response = await axios.post(`https://hotel-management-vnsc.onrender.com/api/waiter/cancelBooking/${clickTable.tableNumber}`, {},
         { withCredentials: true });
       console.log(`Cancel booking request received for table ${clickTable.tableNumber}`);
       toast.success("Booking cancelled successfully!")
@@ -67,7 +67,7 @@ function Main() {
     e.preventDefault();
     try {
 
-      const response = await axios.post(`http://localhost:9000/api/waiter/createOrder/${clickTable._id}`, formData, { withCredentials: true });
+      const response = await axios.post(`https://hotel-management-vnsc.onrender.com/api/waiter/createOrder/${clickTable._id}`, formData, { withCredentials: true });
 
     } catch (error) {
       toast.error(`${error.message}`)
@@ -78,7 +78,7 @@ function Main() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.post("http://localhost:9000/api/waiter/bookTable", formData, { withCredentials: true });
+      const response = await axios.post("https://hotel-management-vnsc.onrender.com/api/waiter/bookTable", formData, { withCredentials: true });
       toast.success("Table booked successfully!")
     } catch (error) {
       toast.error("Failed to book table.")
@@ -88,7 +88,7 @@ function Main() {
   const handleBy = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.post(`http://localhost:9000/api/waiter/bookTable/${clickTable.tableNumber}`, formData, { withCredentials: true });
+      const response = await axios.post(`https://hotel-management-vnsc.onrender.com/api/waiter/bookTable/${clickTable.tableNumber}`, formData, { withCredentials: true });
       toast.success("Table booked successfully!")
     } catch (error) {
       toast.error("Failed to book table.")
@@ -97,7 +97,7 @@ function Main() {
 
   const HandleClick = async (table) => {
     try {
-      const response = await axios.get(`http://localhost:9000/api/waiter/tableStatus/${table.tableNumber}`,
+      const response = await axios.get(`https://hotel-management-vnsc.onrender.com/api/waiter/tableStatus/${table.tableNumber}`,
         { withCredentials: true }
       );
       setClickTable(response.data.table);
@@ -109,7 +109,7 @@ function Main() {
 
   const HandleOrder = async () => {
     try {
-      const response = await axios.get(`http://localhost:9000/api/waiter/orderDetails/${clickTable.orderId}`, { withCredentials: true });
+      const response = await axios.get(`https://hotel-management-vnsc.onrender.com/api/waiter/orderDetails/${clickTable.orderId}`, { withCredentials: true });
       setOrder(response.data.order);
 
 
@@ -121,7 +121,7 @@ function Main() {
 
   const HandleUpdation = async() => {
     try{
-      const response = await axios.post(`http://localhost:9000/api/receptionist/confirmPayment/${clickTable.orderId}`, {paymentThrough: paymentMethod}, { withCredentials: true });
+      const response = await axios.post(`https://hotel-management-vnsc.onrender.com/api/receptionist/confirmPayment/${clickTable.orderId}`, {paymentThrough: paymentMethod}, { withCredentials: true });
       setBill(response.data.bill._id);
       toast.success("Payment status updated successfully!")
       
@@ -134,7 +134,7 @@ function Main() {
 
   const HandleAssign = async() => {
     try{
-      const response = await axios.post(`http://localhost:9000/api/receptionist/updateTableStatus/${clickTable._id}`, {}, { withCredentials: true });
+      const response = await axios.post(`https://hotel-management-vnsc.onrender.com/api/receptionist/updateTableStatus/${clickTable._id}`, {}, { withCredentials: true });
       setClickTable(null);
       setOrder(null);
       setBill(null);
@@ -155,7 +155,7 @@ function Main() {
 
   const ClickDashboard = async () => {
     try {
-      const response = await axios.get("http://localhost:9000/api/waiter/dashboard", { withCredentials: true });
+      const response = await axios.get("https://hotel-management-vnsc.onrender.com/api/waiter/dashboard", { withCredentials: true });
       console.log(response.data);
     } catch (error) {
       console.log(error)
@@ -166,7 +166,7 @@ function Main() {
     const fetchTables = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:9000/api/waiter/AllTables",
+          "https://hotel-management-vnsc.onrender.com/api/waiter/AllTables",
           { withCredentials: true }
         );
         setTables(response.data.tables); // 🔥 store tables
