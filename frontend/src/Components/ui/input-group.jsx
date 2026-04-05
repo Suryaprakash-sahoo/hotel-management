@@ -3,8 +3,8 @@ import { cva } from "class-variance-authority";
 
 import { cn } from "@/lib/utils"
 import { Button } from "../../Components/ui/button"
-import { Input } from "../../components/ui/input"
-import { Textarea } from "../../components/ui/textarea"
+import { Input } from "../../Components/ui/input"
+import { Textarea } from "../../Components/ui/textarea"
 
 function InputGroup({
   className,
