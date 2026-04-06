@@ -18,7 +18,7 @@ const MONGO_URI = process.env.MONGO_URI;
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://hotel-management-60kr.onrender.com",
+  "https://hotel-management-1-frontend.onrender.com/",
 ];
 
 app.use(
