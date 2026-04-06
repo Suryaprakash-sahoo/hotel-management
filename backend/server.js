@@ -1,3 +1,4 @@
+// server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -14,48 +15,40 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
-/* ===================== CORS FIX ===================== */
-
+/* ===================== CORS CONFIG ===================== */
+// Whitelist frontend URLs
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://hotel-management-1-frontend.onrender.com/",
+  "https://hotel-management-1-frontend.onrender.com", // ✅ no trailing slash
 ];
 
+// Use simple array origin format for Render-friendly preflight handling
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow requests without origin (Postman, mobile apps)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, origin); // 🔥 must return origin
-      } else {
-        return callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
 
-/* ===================== MIDDLEWARE ===================== */
+// Handle preflight requests for all routes
+app.options("*", cors());
 
+/* ===================== MIDDLEWARE ===================== */
 app.use(express.json());
 app.use(cookieParser());
 
 /* ===================== ROUTES ===================== */
-
 app.use("/api/user", userRoutes);
 app.use("/api/waiter", waiterRoutes);
 app.use("/api/receptionist", receptionistRoutes);
 
 /* ===================== TEST ROUTE ===================== */
-
 app.get("/", (req, res) => {
   res.send("Hotel Management System API is running 🚀");
 });
 
-/* ===================== DB CONNECTION ===================== */
-
+/* ===================== MONGODB CONNECTION ===================== */
 const mongooseOptions = {
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
@@ -68,30 +61,16 @@ const mongooseOptions = {
 
 mongoose
   .connect(MONGO_URI, mongooseOptions)
-  .then(() => {
-    console.log("✅ Connected to MongoDB successfully");
-  })
+  .then(() => console.log("✅ Connected to MongoDB successfully"))
   .catch((err) => {
     console.error("❌ MongoDB connection error:", err.message);
-    console.error("⚠️  Make sure MongoDB Atlas IP is whitelisted for Render");
     process.exit(1);
   });
 
-// Connection event listeners
-mongoose.connection.on("connected", () => {
-  console.log("📡 Mongoose connected to DB");
-});
+// Event listeners
+mongoose.connection.on("connected", () => console.log("📡 Mongoose connected to DB"));
+mongoose.connection.on("disconnected", () => console.log("⚠️ Mongoose disconnected from DB"));
+mongoose.connection.on("error", (err) => console.error("❌ Mongoose connection error:", err.message));
 
-mongoose.connection.on("disconnected", () => {
-  console.log("⚠️  Mongoose disconnected from DB");
-});
-
-mongoose.connection.on("error", (err) => {
-  console.error("❌ Mongoose connection error:", err.message);
-});
-
-/* ===================== SERVER ===================== */
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+/* ===================== START SERVER ===================== */
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
