@@ -67,6 +67,8 @@ function Main() {
     try {
       await axios.post("https://hotel-management-vnsc.onrender.com/api/waiter/bookTable", formData, { withCredentials: true });
       toast.success("Table booked successfully!")
+      setClickTable(null);
+      setFormData({ tableNumber: "", occupiedByName: "", occupiedByNumber: "" })
     } catch {
       toast.error("Failed to book table.")
     }
@@ -86,6 +88,10 @@ function Main() {
     try {
       const response = await axios.get(`https://hotel-management-vnsc.onrender.com/api/waiter/tableStatus/${table.tableNumber}`, { withCredentials: true });
       setClickTable(response.data.table);
+      setFormData({
+        ...formData,
+        tableNumber: table.tableNumber
+      })
     } catch (error) {
       console.log(error)
     }
@@ -151,7 +157,7 @@ function Main() {
           </div>
         </div>
 
-        {/* MAIN LAYOUT FIXED */}
+        {/* MAIN LAYOUT */}
         <div className="flex flex-1 flex-col lg:flex-row gap-3 px-3 pb-3 overflow-hidden">
 
           {/* LEFT */}
@@ -197,7 +203,7 @@ function Main() {
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR FIXED */}
+          {/* RIGHT SIDEBAR */}
           <div className="w-full lg:w-[320px] xl:w-[350px] bg-white/10 rounded-lg p-3 flex flex-col gap-3 overflow-auto flex-shrink-0">
 
             {clickTable ? (
@@ -214,6 +220,16 @@ function Main() {
                   <button className="bg-purple-500 p-2 rounded" onClick={HandleOrder}>Explore Order</button>
                   <button className="bg-red-500 p-2 rounded" onClick={HandleCancel}>Cancel Booking</button>
                   <button className="bg-green-500 p-2 rounded" onClick={() => navigate(`/order/${clickTable._id}`)}>Order Food</button>
+
+                  {/* 🔹 Book Table Button */}
+                  {!clickTable.occupied && (
+                    <button
+                      className="bg-blue-500 p-2 rounded mt-2"
+                      onClick={handleSubmit}
+                    >
+                      Book Table
+                    </button>
+                  )}
                 </div>
               </>
             ) : (
